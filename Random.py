@@ -105,16 +105,28 @@ class AIPlayer(Player):
 
         count = 0
         for moves in all_legal_moves:
-            
             print(count, moves)
             count+=1
-
             all_legal_move_gamestate_objects.append(getNextState(currentState, moves))
 
         print("====================")
 
+        # Depth will always be 1 for part A
+        depth = 1
+
+        node_list = []
+
         for index in range(list_len):
-            createNode(currentState, all_legal_move_gamestate_objects[index], all_legal_moves[index])
+            node = self.createNode(all_legal_moves[index], all_legal_move_gamestate_objects[index], depth, currentState)
+            node_list.append(node)
+
+
+
+        for node in node_list:
+            print(node)
+
+        print("====================")
+
 
 
         moves = listAllLegalMoves(currentState)
@@ -165,7 +177,7 @@ class AIPlayer(Player):
     #
     #
     def heuristicStepsToGoal(self, currentState):
-        return ""
+        return 1
 
 
     ##
@@ -185,5 +197,14 @@ class AIPlayer(Player):
     #
     # creates a node based on 
     #
-    def createNode(self, currentState, move, move_taken_gamestate)
+    def createNode(self, move_taken, move_taken_gamestate, depth, parent_state):
         
+        return {
+                "move":move_taken,
+                "move_taken_state":move_taken_gamestate,
+                "depth":depth,
+                "evaluation": self.heuristicStepsToGoal(move_taken_gamestate),
+                "parent_state":parent_state
+                }
+
+

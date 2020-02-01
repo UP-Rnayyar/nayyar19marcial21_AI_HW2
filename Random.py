@@ -103,55 +103,24 @@ class AIPlayer(Player):
 
         # Generate a list of the GameState objects that will result from making each possible move.
         all_legal_move_gamestate_objects = []
-
-        count = 0
+        
         for moves in all_legal_moves:
-            print(count, moves)
-            count+=1
             all_legal_move_gamestate_objects.append(getNextState(currentState, moves))
-
-        print("====================")
-
+        
         # Depth will always be 0 for part A
         depth = 0
         node_list = []
-
-        for index in range(list_len):
-            node = self.createNode(all_legal_moves[index], all_legal_move_gamestate_objects[index], depth, currentState)
-            node_list.append(node)
-
-
-        i =0    
-        for node in node_list:
-            print(i, node)
-            i+=1
-
-
-        best_node_index =  self.bestMove(node_list)
-        print("best_node_index: ", best_node_index)
-        print("\n\n", node_list[best_node_index])
-
-        print("====================")
-        #print("======Orignal Below==============")
-
-        moves = listAllLegalMoves(currentState)
-        selectedMove = moves[random.randint(0,len(moves) - 1)];
-
-        #don't do a build move if there are already 3+ ants
-        numAnts = len(currentState.inventories[currentState.whoseTurn].ants)
-        while (selectedMove.moveType == BUILD and numAnts >= 3):
-            selectedMove = moves[random.randint(0,len(moves) - 1)];
+        
+        if all_legal_moves:
+            #Creating a node using each move and GameState. 
+            for index in range(list_len):
+                node = self.createNode(all_legal_moves[index], all_legal_move_gamestate_objects[index], depth, currentState)
+                node_list.append(node)
             
-        return selectedMove
-
-
-        # Generate a list of the GameState objects that will result from making each possible move. You will probably find the getNextState() method in
-        #AIPlayerUtils.py helpful for this part. (Do not use getNextStateAdversarial().)
-        
-        #Use each move and GameState to create a node (see above). Then, put all these nodes in a list. 
-        #Currently, creating this list may feel like a waste of cycles. Do it anyway as you’ll need this list in Part B.
-        
-        #Return the move associated with the node that has the highest evaluation.
+            #Return the move associated with the node that has the highest evaluation.
+            return node_list[self.bestMove(node_list)]['move']
+        else:
+            return None
     
     ##
     #getAttack

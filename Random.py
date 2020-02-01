@@ -111,9 +111,8 @@ class AIPlayer(Player):
 
         print("====================")
 
-        # Depth will always be 1 for part A
-        depth = 1
-
+        # Depth will always be 0 for part A
+        depth = 0
         node_list = []
 
         for index in range(list_len):
@@ -125,9 +124,7 @@ class AIPlayer(Player):
         for node in node_list:
             print(node)
 
-        print("====================")
-
-
+        #print("======Orignal Below==============")
 
         moves = listAllLegalMoves(currentState)
         selectedMove = moves[random.randint(0,len(moves) - 1)];
@@ -176,24 +173,46 @@ class AIPlayer(Player):
     #heuristicStepsToGoal
     #
     #
-    def heuristicStepsToGoal(self, currentState):
+    def heuristicStepsToGoal(self, move_taken_gamestate):
         return 1
 
 
     ##
     #
-    #bestMove
+    #bestMove   (helper method)
     #
     #search a given list of nodes to find the one with 
     #the best evaluation and return it to the caller
     #
-    def bestMove(self, currentState):
-        return ""
+    def bestMove(self, currentState, node_list):
 
+        hightest_evaluation = 0
+        best_node = []
+        same_node_eval = []
+
+        for node in node_list:
+            if node['evaluation'] == hightest_evaluation:
+                same_node_eval.append(node)
+                if best_node[0] not in same_node_eval:
+                    same_node_eval.append(best_node[0])
+
+            if nodenode['evaluation'] > hightest_evaluation:
+                hightest_evaluation = node
+                best_node = []
+                best_node.append(node)
+                same_node_eval = []
+
+        if same_node_eval:
+            return same_node_eval[randrange(len(same_node_eval))]
+       
+        if best_node[0]:
+            return best_node[0]
+        else:
+            return None # This should never happen
 
     ##
     #
-    #createNode
+    #createNode (helper method)
     #
     # creates a node based on 
     #

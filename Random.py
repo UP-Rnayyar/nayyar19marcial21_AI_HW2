@@ -8,6 +8,7 @@ from Ant import UNIT_STATS
 from Move import Move
 from GameState import *
 from AIPlayerUtils import *
+from random import randrange
 
 
 ##
@@ -120,10 +121,17 @@ class AIPlayer(Player):
             node_list.append(node)
 
 
-
+        i =0    
         for node in node_list:
-            print(node)
+            print(i, node)
+            i+=1
 
+
+        best_node_index =  self.bestMove(node_list)
+        print("best_node_index: ", best_node_index)
+        print("\n\n", node_list[best_node_index])
+
+        print("====================")
         #print("======Orignal Below==============")
 
         moves = listAllLegalMoves(currentState)
@@ -174,7 +182,7 @@ class AIPlayer(Player):
     #
     #
     def heuristicStepsToGoal(self, move_taken_gamestate):
-        return 1
+        return randrange(0,10)
 
 
     ##
@@ -184,31 +192,29 @@ class AIPlayer(Player):
     #search a given list of nodes to find the one with 
     #the best evaluation and return it to the caller
     #
-    def bestMove(self, currentState, node_list):
-
-        hightest_evaluation = 0
+    def bestMove(self, node_list):
+        hightest_evaluation = -1
         best_node = []
         same_node_eval = []
-
+        
+        eval_values = []
         for node in node_list:
-            if node['evaluation'] == hightest_evaluation:
-                same_node_eval.append(node)
-                if best_node[0] not in same_node_eval:
-                    same_node_eval.append(best_node[0])
+            eval_values.append(node['evaluation'])
 
-            if nodenode['evaluation'] > hightest_evaluation:
-                hightest_evaluation = node
-                best_node = []
-                best_node.append(node)
-                same_node_eval = []
+        max_eval_value = max(eval_values)
+        index = 0
+        for value in eval_values:
+            if value == max_eval_value:
+                same_node_eval.append(index)
+            index += 1
 
         if same_node_eval:
-            return same_node_eval[randrange(len(same_node_eval))]
-       
-        if best_node[0]:
-            return best_node[0]
+            if len(same_node_eval) > 1:
+                return same_node_eval[randrange(len(same_node_eval))] 
+            else:
+                return same_node_eval[0]
         else:
-            return None # This should never happen
+            return node_list.index(max_eval_value)
 
     ##
     #
@@ -217,13 +223,47 @@ class AIPlayer(Player):
     # creates a node based on 
     #
     def createNode(self, move_taken, move_taken_gamestate, depth, parent_state):
-        
+
         return {
-                "move":move_taken,
-                "move_taken_state":move_taken_gamestate,
-                "depth":depth,
-                "evaluation": self.heuristicStepsToGoal(move_taken_gamestate),
-                "parent_state":parent_state
-                }
+            "move":move_taken,
+            "move_taken_state":move_taken_gamestate,
+            "depth":depth,
+            "evaluation": self.heuristicStepsToGoal(move_taken_gamestate),
+            "parent_state":parent_state
+            }
 
+   
+def test_best_move():
+    print("Testing the bestMove() function")
+    test_node_list = [
+        {'evaluation':1},
+        {'evaluation':2},
+        {'evaluation':3},
+        {'evaluation':14},
+        {'evaluation':5},
+        {'evaluation':12},
+        {'evaluation':1},
+        {'evaluation':2},
+        {'evaluation':3},
+        {'evaluation':4},
+        {'evaluation':12},
+        {'evaluation':14},
+        {'evaluation':14},
+        {'evaluation':14},
+        {'evaluation':14}
+    ]
 
+    max_eval_index_list = [3, 11, 12, 13, 14]
+
+    instance = AIPlayer(1)
+    retval = instance.bestMove(test_node_list)
+    if retval not in max_eval_index_list:
+        print("bestMove() function was not able to obtain the best move")
+
+    test_node_list.append(dict({'evaluation':100}))
+
+    retval = instance.bestMove(test_node_list)
+    if retval != len(test_node_list)-1:
+        print("bestMove() function was not able to obtain the best move")
+ 
+test_best_move()
